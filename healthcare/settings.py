@@ -56,7 +56,7 @@ THIRD_PARTY_APPS = [
 
 INSTALLED_APPS = DEFAULT_DJANGO_APPS + THIRD_PARTY_APPS + LOACAL_APPS
 
-AUTH_USER_MODEL = 'users.SuperUser'
+AUTH_USER_MODEL = 'healthcare.users.SuperUser'
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
