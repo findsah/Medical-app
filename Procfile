@@ -1,1 +1,1 @@
-web: gunicorn healthcare.settings --log-file -
+web: gunicorn healthcare.healthcare.settings --log-file -
