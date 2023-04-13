@@ -45,7 +45,7 @@ DEFAULT_DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 LOACAL_APPS = [
-    'users'
+    'healthcare.users'
 ]
 
 THIRD_PARTY_APPS = [
