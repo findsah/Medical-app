@@ -45,7 +45,7 @@ DEFAULT_DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 LOACAL_APPS = [
-    'healthcare.users'
+    'users'
 ]
 
 THIRD_PARTY_APPS = [
@@ -54,9 +54,9 @@ THIRD_PARTY_APPS = [
                 'corsheaders'
             ]
 
-INSTALLED_APPS = DEFAULT_DJANGO_APPS + LOACAL_APPS + THIRD_PARTY_APPS 
+INSTALLED_APPS = DEFAULT_DJANGO_APPS + THIRD_PARTY_APPS + LOACAL_APPS
 
-AUTH_USER_MODEL = 'healthcare.users.SuperUser'
+AUTH_USER_MODEL = 'users.SuperUser'
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -70,7 +70,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'healthcare.healthcare.urls'
+ROOT_URLCONF = 'healthcare.urls'
 
 TEMPLATES = [
     {
@@ -88,7 +88,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'healthcare.healthcare.wsgi.application'
+WSGI_APPLICATION = 'healthcare.wsgi.application'
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
