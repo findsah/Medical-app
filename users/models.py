@@ -56,7 +56,7 @@ class SuperUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('Email Address'), unique=True) 
     first_name = models.CharField(_('First Name'), blank=True, max_length=200)
     last_name = models.CharField(_('Last Name'), blank=True, max_length=200)
-    phone = models.CharField(_('Phone'), blank=True, default=False, max_length=12)
+    phone = models.CharField(_('Phone'), blank=True, default=False, max_length=15)
     address = models.CharField(_('Address'), blank=True, max_length=300) 
     user_type = models.CharField(_('User role'), max_length=2, choices=USER_TYPE_CHOICE)
     is_staff = models.BooleanField(default=False)
