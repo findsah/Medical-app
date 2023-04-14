@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings 
 from rest_framework.routers import DefaultRouter 
 
-from users.views import RegisterAPI, LoginAPI, LoggedInUser, EmailVerifyAPI, ResendOTPAPI
+from users.views import MedicalHistoryAPI, RegisterAPI, LoginAPI, LoggedInUser, EmailVerifyAPI, ResendOTPAPI
 
 router=DefaultRouter()
 
@@ -17,6 +17,8 @@ urlpatterns = [
     path('login/', LoginAPI.as_view(), name='login'), 
     path('email_verify/', EmailVerifyAPI.as_view(), name='email_verify'), 
     path('resend_otp/', ResendOTPAPI.as_view(), name='resend_otp'), 
+    path('medicl_hitory/', MedicalHistoryAPI.as_view(), name='medicl_hitory'), 
+    path('medicl_hitory/<int:pk>/', MedicalHistoryAPI.as_view(), name='get_medicl_hitory'), 
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

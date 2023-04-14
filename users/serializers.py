@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = SuperUser
-        fields=["id","email","first_name","last_name","phone","address"]
+        fields=["id","email","first_name","last_name","phone","user_type","address"]
 
 class OTPSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,6 +17,17 @@ class OTPSerializer(serializers.ModelSerializer):
     def validate_user_email(self, value):
         if value =='' or value is None:
             raise ValidationError('User email is required')
+
+class MedicalHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicalHistory
+        fields = ['id','user', 'attachment']
+    
+    def validate_attachment(self, value):
+        if not value:
+            raise ValidationError('Attachment is required.')
+
+
 
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=200) 

@@ -95,5 +95,22 @@ class UserOtp(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
 
+    class Meta:
+        verbose_name = 'Otps'
+        verbose_name_plural = 'Otps'
+            
     def __str__(self):
         return 'OTP for '+ self.user_email
+
+class MedicalHistory(models.Model):
+    user=models.ForeignKey(SuperUser, on_delete=models.CASCADE)
+    attachment = models.FileField(upload_to='uploads/medical_history')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
+
+    class Meta:
+        verbose_name = 'User Medical History'
+        verbose_name_plural = 'User Medical History'
+    
+    def __str__(self):
+        return 'Medical History of '+ self.user.first_name

@@ -3,12 +3,14 @@ import random
 from smtplib import SMTPException
 from django.core.mail import send_mail, EmailMessage
 
-from users.models import SuperUser, UserOtp
-from .serializers import LoginUserSerializer, OTPSerializer, RegistrationSerializer, UserSerializer
+from users.models import MedicalHistory, SuperUser, UserOtp
+from .serializers import LoginUserSerializer, MedicalHistorySerializer, OTPSerializer, RegistrationSerializer, UserSerializer
 from rest_framework import status, generics, viewsets, permissions
 from rest_framework.response import Response  
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token as AuthToken
+from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
+from rest_framework.views import APIView
 # Create your views here.
 
 def send_otp_on_mail(username, email, save_otp=True) :
@@ -68,8 +70,6 @@ class ResendOTPAPI(generics.GenericAPIView):
             return Response({'msg':'OTP has been send on {}'.format(user_email), 'status':status.HTTP_200_OK})
         else:
             return Response({'details':'OPPS! your email not found. Please register.'}) 
-        
-
 
 class RegisterAPI(generics.GenericAPIView): 
     permission_classes = [permissions.AllowAny]
@@ -108,3 +108,50 @@ class LoggedInUser(generics.RetrieveAPIView):
   serializer_class = UserSerializer
   def get_object(self):
     return self.request.user
+  
+class MedicalHistoryAPI(generics.GenericAPIView):
+    # permission_classes = [permissions.AllowAny]
+    parser_classes = (MultiPartParser, FormParser)
+    def post(self, request, format=None):
+        request.data['user'] = request.user.id
+        serializer = MedicalHistorySerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True):
+            try:
+                inst = MedicalHistory.objects.get(user=request.user)
+            except MedicalHistory.DoesNotExist:
+                inst = None
+            if inst:
+                inst.attachment = request.FILES['attachment']
+                inst.save()
+                return Response({
+                    'data':MedicalHistorySerializer(inst).data,
+                    'status':status.HTTP_200_OK
+                })
+            c = MedicalHistory(user=request.user, attachment = request.FILES['attachment'])
+            c.save()
+            return Response({
+                'data':MedicalHistorySerializer(c).data,
+                'status':status.HTTP_201_CREATED
+            })
+        return Response({
+                'data':serializer.errors,
+                'status':status.HTTP_400_BAD_REQUEST
+            })
+
+    def get(self, request, pk=None):
+        user_id = self.request.user 
+        if pk:
+            try:
+                inst = MedicalHistory.objects.get(id=pk, user=user_id)
+            except MedicalHistory.DoesNotExist:
+                inst = None
+        
+            return Response({
+                'data':MedicalHistorySerializer(inst).data,
+                'status':status.HTTP_200_OK
+            })
+        dataSet = MedicalHistory.objects.filter(user=user_id)
+        return Response({
+            'data':MedicalHistorySerializer(dataSet, many=True).data,
+            'status':status.HTTP_200_OK
+        })
