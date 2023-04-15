@@ -176,7 +176,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://vocal-torte-60de55.netlify.app"
 ]
-
+ 
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  
 # DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 # SERVER_EMAIL = env("SERVER_EMAIL")
