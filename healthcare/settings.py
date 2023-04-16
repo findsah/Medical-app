@@ -105,8 +105,8 @@ WSGI_APPLICATION = 'healthcare.wsgi.application'
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': "medical-app-db",
-    'USER': "medical_app_db",
+    'NAME': "medical_app_db",
+    'USER': "postgres",
     'PASSWORD': "Medicalapp2023",
     'HOST': "medical-app-db.capltgczwktt.eu-north-1.rds.amazonaws.com",
     'PORT': "5432",
