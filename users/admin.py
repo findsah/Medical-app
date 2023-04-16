@@ -18,7 +18,6 @@ class UserAdmin(UserAdmin):
             ),
         )
 
-
 admin.site.register(User, UserAdmin) 
 admin.site.register(UserOtp) 
 admin.site.register(MedicalHistory) 
