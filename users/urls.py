@@ -9,7 +9,7 @@ from users.views import MedicalHistoryAPI, RegisterAPI, LoginAPI, LoggedInUser, 
 router=DefaultRouter()
 
 # router.register('question_api', views.QuestionModelViewSet, basename='question') 
-
+ 
 urlpatterns = [ 
     # path('',include(router.urls)), 
     path('registration/', RegisterAPI.as_view(), name='register'), 
