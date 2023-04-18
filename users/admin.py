@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SuperUser as User, UserOtp, MedicalHistory
+from .models import Appointment, Heartbeat, SuperUser as User, UserOtp, MedicalHistory
 from django.contrib.auth.forms import UserChangeForm,AdminPasswordChangeForm
 from django.contrib.auth.admin import UserAdmin
 # Register your models here.
@@ -21,3 +21,5 @@ class UserAdmin(UserAdmin):
 admin.site.register(User, UserAdmin) 
 admin.site.register(UserOtp) 
 admin.site.register(MedicalHistory) 
+admin.site.register(Heartbeat) 
+admin.site.register(Appointment) 
