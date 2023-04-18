@@ -10,6 +10,7 @@ from rest_framework.authtoken.models import Token
 from django.conf import settings
 from django.utils import timezone
 from django.utils.text import slugify
+from django.core.validators import MaxValueValidator, MinValueValidator, MaxLengthValidator, MinLengthValidator
 # Create your models here.
 
 class CustomUser(BaseUserManager):
@@ -109,8 +110,46 @@ class MedicalHistory(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
 
     class Meta:
-        verbose_name = 'User Medical History'
-        verbose_name_plural = 'User Medical History'
+        verbose_name = 'Users Medical History'
+        verbose_name_plural = 'Users Medical History'
     
     def __str__(self):
         return 'Medical History of '+ self.user.first_name
+
+
+class Appointment(models.Model):
+    user=models.ForeignKey(SuperUser, on_delete=models.CASCADE)
+    appointment_day   = models.IntegerField(
+        validators=[MaxValueValidator(31), MinValueValidator(1)] 
+        )
+    appointment_month = models.IntegerField(
+        validators=[MaxValueValidator(12), MinValueValidator(1)] 
+        )
+    appointment_year  = models.IntegerField()
+    appointment_time  = models.TimeField(blank=True, null=True) 
+    description = models.CharField(max_length=500, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
+
+    class Meta:
+        verbose_name = 'Users Appointment'
+        verbose_name_plural = 'Users Appointment'
+    
+    def __str__(self):
+        return 'Appointment of '+ self.user.first_name
+    
+class Heartbeat(models.Model):
+    user=models.ForeignKey(SuperUser, on_delete=models.CASCADE, blank=True)
+    oxygen_level   = models.CharField(max_length=20)
+    heart_rate = models.CharField(max_length=20)
+    temperature  = models.CharField(max_length=20) 
+    description = models.CharField(max_length=500, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
+
+    class Meta:
+        verbose_name = 'Users Heartbeat'
+        verbose_name_plural = 'Users Heartbeat'
+    
+    def __str__(self):
+        return 'Heartbeat of '+ self.user.first_name

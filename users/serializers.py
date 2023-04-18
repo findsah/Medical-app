@@ -9,6 +9,16 @@ class UserSerializer(serializers.ModelSerializer):
         model = SuperUser
         fields=["id","email","first_name","last_name","phone","user_type","address"]
 
+class HeartbeatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Heartbeat
+        fields=["id","user","oxygen_level","heart_rate","temperature","description"]
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields=["id","user","appointment_day","appointment_month","appointment_year","appointment_time","description"]
+
 class OTPSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserOtp

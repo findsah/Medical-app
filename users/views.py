@@ -3,8 +3,8 @@ import random
 from smtplib import SMTPException
 from django.core.mail import send_mail, EmailMessage
 
-from users.models import MedicalHistory, SuperUser, UserOtp
-from .serializers import LoginUserSerializer, MedicalHistorySerializer, OTPSerializer, RegistrationSerializer, UserSerializer
+from users.models import Appointment, Heartbeat, MedicalHistory, SuperUser, UserOtp
+from .serializers import AppointmentSerializer, HeartbeatSerializer, LoginUserSerializer, MedicalHistorySerializer, OTPSerializer, RegistrationSerializer, UserSerializer
 from rest_framework import status, generics, viewsets, permissions
 from rest_framework.response import Response  
 from rest_framework.permissions import IsAuthenticated
@@ -155,3 +155,120 @@ class MedicalHistoryAPI(generics.GenericAPIView):
             'data':MedicalHistorySerializer(dataSet, many=True).data,
             'status':status.HTTP_200_OK
         })
+
+class AppointmentAPI(generics.GenericAPIView):
+    # permission_classes = [permissions.AllowAny] 
+    def post(self, request, format=None):
+        request.data._mutable = True
+        request.data['user'] = request.user.id
+        request.data._mutable = False 
+        serializer = AppointmentSerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True): 
+            serializer.save()
+            return Response({
+                'data':serializer.data,
+                'status':status.HTTP_201_CREATED
+            })
+        return Response({
+                'data':serializer.errors,
+                'status':status.HTTP_400_BAD_REQUEST
+            })
+
+    def get(self, request, pk=None): 
+        user_id = request.user 
+        if pk:
+            try:
+                inst = Appointment.objects.get(id=pk, user=user_id)
+            except Appointment.DoesNotExist:
+                inst = None 
+            return Response({
+                'data':AppointmentSerializer(inst).data if inst else {},
+                'status':status.HTTP_200_OK
+            })
+        dataSet = Appointment.objects.filter(user=user_id)
+        return Response({
+            'data':AppointmentSerializer(dataSet, many=True).data,
+            'status':status.HTTP_200_OK
+        })
+    
+    def delete(self, request, pk): 
+        user_id = request.user 
+        if pk:
+            try:
+                inst = Appointment.objects.get(id=pk, user=user_id)
+                inst.delete()
+            except Appointment.DoesNotExist:
+                inst = None  
+            return Response({
+                'data':{},
+                'status':status.HTTP_204_NO_CONTENT
+            }) 
+        return Response({
+            'data':'Somethings went wrong',
+            'status':status.HTTP_200_OK
+        })
+
+class HeartbeatAPI(generics.GenericAPIView):
+    permission_classes = [permissions.AllowAny] 
+    def post(self, request, format=None): 
+        serializer = HeartbeatSerializer(data = request.data)
+        if serializer.is_valid(raise_exception=True): 
+            serializer.save()
+            return Response({
+                'data':serializer.data,
+                'status':status.HTTP_201_CREATED
+            })
+        return Response({
+                'data':serializer.errors,
+                'status':status.HTTP_400_BAD_REQUEST
+            })
+
+    def get(self, request, pk=None): 
+        # user_id = request.user 
+        if pk:
+            try:
+                inst = Heartbeat.objects.get(id=pk)
+            except Heartbeat.DoesNotExist:
+                inst = None 
+            return Response({
+                'data':HeartbeatSerializer(inst).data if inst else {},
+                'status':status.HTTP_200_OK
+            })
+        dataSet = Heartbeat.objects.filter()
+        return Response({
+            'data':HeartbeatSerializer(dataSet, many=True).data,
+            'status':status.HTTP_200_OK
+        })
+    
+    def delete(self, request, pk):  
+        if pk:
+            try:
+                inst = Heartbeat.objects.get(id=pk)
+                inst.delete()
+            except Heartbeat.DoesNotExist:
+                inst = None  
+            return Response({
+                'data':{},
+                'status':status.HTTP_204_NO_CONTENT
+            }) 
+        return Response({
+            'data':'Somethings went wrong',
+            'status':status.HTTP_200_OK
+        })
+
+class AllUserAPI(generics.GenericAPIView):
+  def get(self, request, pk=None, formte=None): 
+    if pk:
+        try: 
+            users = SuperUser.objects.get(id=pk, is_superuser=False, is_staff=False)
+        except SuperUser.DoesNotExist:
+            users = None
+        return Response({
+            'data': UserSerializer(users).data,
+            'status':status.HTTP_200_OK
+        })
+    users = SuperUser.objects.filter(is_superuser=False, is_staff=False)
+    return Response({
+        'data': UserSerializer(users, many=True).data,
+        'status':status.HTTP_200_OK
+    })
