@@ -37,7 +37,14 @@ class MedicalHistorySerializer(serializers.ModelSerializer):
         if not value:
             raise ValidationError('Attachment is required.')
 
-
+class MedicalFormSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MedicalForm
+        fields = ['id','doctor', 'attachment','patient','description']
+    
+    def validate_attachment(self, value):
+        if not value:
+            raise ValidationError('Attachment is required.')
 
 class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField(max_length=200) 

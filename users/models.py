@@ -57,9 +57,9 @@ class SuperUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('Email Address'), unique=True) 
     first_name = models.CharField(_('First Name'), blank=True, max_length=200)
     last_name = models.CharField(_('Last Name'), blank=True, max_length=200)
-    phone = models.CharField(_('Phone'), blank=True, default=False, max_length=15)
+    phone = models.CharField(_('Phone'), blank=True, default='', max_length=15)
     address = models.CharField(_('Address'), blank=True, max_length=300) 
-    user_type = models.CharField(_('User role'), max_length=2, choices=USER_TYPE_CHOICE)
+    user_type = models.CharField( max_length=2, choices=USER_TYPE_CHOICE)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -153,3 +153,18 @@ class Heartbeat(models.Model):
     
     def __str__(self):
         return 'Heartbeat of '+ self.user.first_name
+    
+class MedicalForm(models.Model):
+    doctor = models.ForeignKey(SuperUser, on_delete=models.CASCADE, related_name='doctor_user')
+    attachment = models.FileField(upload_to='uploads/medical_form')
+    patient = models.ForeignKey(SuperUser, on_delete=models.DO_NOTHING, related_name='patient')
+    description = models.CharField(max_length=500, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Created At')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='Updated At')
+
+    class Meta:
+        verbose_name = 'Users Medical form'
+        verbose_name_plural = 'Users Medical form'
+    
+    def __str__(self):
+        return 'Medical form of '+ self.patient.first_name

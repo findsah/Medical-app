@@ -3,8 +3,8 @@ import random
 from smtplib import SMTPException
 from django.core.mail import send_mail, EmailMessage
 
-from users.models import Appointment, Heartbeat, MedicalHistory, SuperUser, UserOtp
-from .serializers import AppointmentSerializer, HeartbeatSerializer, LoginUserSerializer, MedicalHistorySerializer, OTPSerializer, RegistrationSerializer, UserSerializer
+from users.models import Appointment, Heartbeat, MedicalForm, MedicalHistory, SuperUser, UserOtp
+from .serializers import AppointmentSerializer, HeartbeatSerializer, LoginUserSerializer, MedicalFormSerializer, MedicalHistorySerializer, OTPSerializer, RegistrationSerializer, UserSerializer
 from rest_framework import status, generics, viewsets, permissions
 from rest_framework.response import Response  
 from rest_framework.permissions import IsAuthenticated
@@ -272,3 +272,57 @@ class AllUserAPI(generics.GenericAPIView):
         'data': UserSerializer(users, many=True).data,
         'status':status.HTTP_200_OK
     })
+  
+
+class MedicalFormAPI(generics.GenericAPIView): 
+    parser_classes = (MultiPartParser, FormParser)
+    def post(self, request, format=None):
+        request.data['doctor'] = request.user.id
+        serializer = MedicalFormSerializer(data = request.data) 
+
+        if serializer.is_valid(raise_exception=True):
+            patient_id = request.POST.get('patient')
+            if int(patient_id) == request.user.id:
+                return Response({
+                    'data':'Somethings went wrong',
+                    'status':status.HTTP_400_BAD_REQUEST
+                }) 
+            try:
+                inst = MedicalForm.objects.get(doctor=request.user, patient=patient_id)
+            except MedicalForm.DoesNotExist:
+                inst = None
+            if inst:
+                inst.attachment = request.FILES['attachment']
+                inst.description = request.POST.get('description')
+                inst.save()
+                return Response({
+                    'data':MedicalFormSerializer(inst).data,
+                    'status':status.HTTP_200_OK
+                })
+            c = MedicalForm(doctor=request.user, description=request.POST.get('description'), patient_id=patient_id, attachment = request.FILES['attachment'])
+            c.save()
+            return Response({
+                'data': MedicalFormSerializer(c).data,
+                'status':status.HTTP_201_CREATED
+            })
+        return Response({
+                'data':serializer.errors,
+                'status':status.HTTP_400_BAD_REQUEST
+            })
+
+    def get(self, request, pk=None):
+        user_id = self.request.user 
+        if pk:
+            try:
+                inst = MedicalForm.objects.get(id=pk, patient=user_id)
+            except MedicalForm.DoesNotExist:
+                inst = None 
+            return Response({
+                'data':MedicalFormSerializer(inst).data if inst else {},
+                'status':status.HTTP_200_OK
+            })
+        dataSet = MedicalForm.objects.filter(patient=user_id)
+        return Response({
+            'data':MedicalFormSerializer(dataSet, many=True).data,
+            'status':status.HTTP_200_OK
+        })

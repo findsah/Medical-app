@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings 
 from rest_framework.routers import DefaultRouter 
 
-from users.views import AllUserAPI, AppointmentAPI, HeartbeatAPI, MedicalHistoryAPI, RegisterAPI, LoginAPI, LoggedInUser, EmailVerifyAPI, ResendOTPAPI
+from users.views import AllUserAPI, AppointmentAPI, HeartbeatAPI, MedicalFormAPI, MedicalHistoryAPI, RegisterAPI, LoginAPI, LoggedInUser, EmailVerifyAPI, ResendOTPAPI
 
 router=DefaultRouter()
 
@@ -25,6 +25,8 @@ urlpatterns = [
     path('book_appointment/<int:pk>/', AppointmentAPI.as_view(), name='get_appointment'), 
     path('heartbeat/', HeartbeatAPI.as_view(), name='heartbeat'), 
     path('heartbeat/<int:pk>/', HeartbeatAPI.as_view(), name='get_heartbeat'), 
+    path('medical_form/', MedicalFormAPI.as_view(), name='medical_form'), 
+    path('medical_form/<int:pk>/', MedicalFormAPI.as_view(), name='get_medical_form'), 
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
