@@ -224,7 +224,7 @@ class HeartbeatAPI(generics.GenericAPIView):
             })
 
     def get(self, request, pk=None): 
-        # user_id = request.user 
+        user_id = request.GET.get('user_id')   
         if pk:
             try:
                 inst = Heartbeat.objects.get(id=pk)
@@ -234,7 +234,13 @@ class HeartbeatAPI(generics.GenericAPIView):
                 'data':HeartbeatSerializer(inst).data if inst else {},
                 'status':status.HTTP_200_OK
             })
-        dataSet = Heartbeat.objects.filter()
+        if user_id:
+            dataSet = Heartbeat.objects.filter(user=user_id)
+            return Response({
+                'data':HeartbeatSerializer(dataSet, many=True).data,
+                'status':status.HTTP_200_OK
+            })
+        dataSet = Heartbeat.objects.all()
         return Response({
             'data':HeartbeatSerializer(dataSet, many=True).data,
             'status':status.HTTP_200_OK
